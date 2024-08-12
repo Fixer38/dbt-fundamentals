@@ -22,15 +22,13 @@ orders as (
 final as (
 
     select
-        customers.customer_id as customer_id,
-        orders.order_id as order_id,
-        payments.amount as amount
+        orders.order_id,
+        orders.customer_id,
+        orders.order_date,
+        coalesce (order_payments.amount, 0) as amount
 
-    from customers
-
-    left join orders using (customer_id)
-    left join payments using (orders.order_id)
-
+    from orders
+    left join order_payments using (order_id)
 )
 
 select * from final

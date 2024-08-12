@@ -18,6 +18,13 @@ orders as (
 
 ),
 
+payments as (
+
+    select *
+    from {{ ref("stg_stripe__payments")}}
+
+),
+
 customer_orders as (
 
     select
@@ -42,10 +49,12 @@ final as (
         customer_orders.first_order_date,
         customer_orders.most_recent_order_date,
         coalesce(customer_orders.number_of_orders, 0) as number_of_orders
+        payments.amount as lifetime_amount
 
     from customers
 
     left join customer_orders using (customer_id)
+    left join payments using (customer_orders.order_id)
 
 )
 
