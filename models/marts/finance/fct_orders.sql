@@ -1,22 +1,27 @@
-with payments as (
-
-    select *
-    from {{ ref("stg_stripe__payments")}}
-
+with orders as  (
+    select * from {{ ref ('stg_jaffle_shop__orders' )}}
 ),
 
-customers as (
-
-    select *
-    from {{ ref("stg_jaffle_shop__customers")}}
-    
+payments as (
+    select * from {{ ref ('stg_stripe__payments') }}
 ),
 
-orders as (
+order_payments as (
+    select
+        order_id,
+        sum (case when status = 'success' then amount end) as amount
 
-    select *
-    from {{ ref("stg_jaffle_shop__orders")}}
+    from payments
+    group by 1
+),
 
+order_payments as (
+    select
+        order_id,
+        sum (case when status = 'success' then amount end) as amount
+
+    from payments
+    group by 1
 ),
 
 final as (
