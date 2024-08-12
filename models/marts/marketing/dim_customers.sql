@@ -21,7 +21,7 @@ orders as (
 payments as (
 
     select *
-    from {{ ref("stg_stripe__payments")}}
+    from {{ ref("stg_payments")}}
 
 ),
 
